@@ -1,0 +1,10 @@
+D:\Project\EPAM task\02-Generics\Generics.Test\bin\Debug\Generics.Test.dll
+D:\Project\EPAM task\02-Generics\Generics.Test\bin\Debug\Generics.Test.pdb
+D:\Project\EPAM task\02-Generics\Generics.Test\bin\Debug\Generics.dll
+D:\Project\EPAM task\02-Generics\Generics.Test\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+D:\Project\EPAM task\02-Generics\Generics.Test\bin\Debug\Generics.pdb
+D:\Project\EPAM task\02-Generics\Generics.Test\obj\Debug\Generics.Test.csprojAssemblyReference.cache
+D:\Project\EPAM task\02-Generics\Generics.Test\obj\Debug\Generics.Test.csproj.CoreCompileInputs.cache
+D:\Project\EPAM task\02-Generics\Generics.Test\obj\Debug\Generics.Test.csproj.CopyComplete
+D:\Project\EPAM task\02-Generics\Generics.Test\obj\Debug\Generics.Test.dll
+D:\Project\EPAM task\02-Generics\Generics.Test\obj\Debug\Generics.Test.pdb

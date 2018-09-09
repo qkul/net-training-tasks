@@ -1,0 +1,6 @@
+D:\Project\EPAM task\02-Generics\Generics\bin\Debug\Generics.dll
+D:\Project\EPAM task\02-Generics\Generics\bin\Debug\Generics.pdb
+D:\Project\EPAM task\02-Generics\Generics\obj\Debug\Generics.csprojAssemblyReference.cache
+D:\Project\EPAM task\02-Generics\Generics\obj\Debug\Generics.csproj.CoreCompileInputs.cache
+D:\Project\EPAM task\02-Generics\Generics\obj\Debug\Generics.dll
+D:\Project\EPAM task\02-Generics\Generics\obj\Debug\Generics.pdb
