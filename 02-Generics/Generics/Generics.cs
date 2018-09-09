@@ -53,11 +53,15 @@ namespace Task.Generics {
             // TODO : Implement ConvertToList<T>
             // HINT : Use TypeConverter.ConvertFromString method to parse string value
 
-          
-            List<T> ConvertList = new List<T>(); //FormatException
-            ConvertList.Add((T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromString(list));
-            return ConvertList;
-            
+            List<T> resultConvertList = new List<T>();
+            var converter = TypeDescriptor.GetConverter(list);
+            resultConvertList.Add((T)converter.ConvertFromString(list));
+            return resultConvertList;
+
+            //List<T> ConvertList = new List<T>(); //FormatException
+            //ConvertList.Add((T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromString(list));
+            //return ConvertList;
+
 
             // var temp = TypeDescriptor.GetConverter(list);//Returns a type converter for a component or a type
             //TypeConverter converter =
@@ -65,7 +69,7 @@ namespace Task.Generics {
             //return (T)converter.ConvertFromString(null,
             //CultureInfo.InvariantCulture, (typeof(T) temp));
 
-           // throw new NotImplementedException();
+            // throw new NotImplementedException();
         }
 
     }
@@ -231,11 +235,9 @@ namespace Task.Generics {
                     function();
                 }
                 catch (WebException ex)
-                {
+                { 
                     Trace.Write(ex);
                 }
-                catch (ArgumentNullException ex){} 
-                catch (Exception ex){}
             }
             return function();
 		}
