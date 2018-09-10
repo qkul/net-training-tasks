@@ -186,17 +186,24 @@ namespace Task.Generics {
     /// </example>
     public static class Singleton<T> where T : class, new()
     {
-        private static T instance = new T();
+        //fix old style implementation
+        //using .NET 4's Lazy<T> type
         static Singleton() { }
-        public static T Instance
-        {
-            get
-            {
-                if (instance == null)
-                    instance = new T();
-                return instance;
-            }
-        }
+        private static readonly Lazy<T> lazy =
+            new Lazy<T>(() => new T());
+        public static T Instance { get { return lazy.Value; } }
+
+        //private static T instance = new T();
+        //static Singleton() { }
+        //public static T Instance
+        //{
+        //    get
+        //    {
+        //        if (instance == null)
+        //            instance = new T();
+        //        return instance;
+        //    }
+        //}
     }
 
 
