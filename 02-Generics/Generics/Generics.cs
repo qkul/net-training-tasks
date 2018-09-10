@@ -51,22 +51,18 @@ namespace Task.Generics {
 		///  </example>
 		public static IEnumerable<T> ConvertToList<T>(this string list) {
             // TODO : Implement ConvertToList<T>
-            // HINT : Use TypeConverter.ConvertFromString method to parse string value
+            // HINT : Use TypeConverter.ConvertFromString method to parse string value     
+            //fixed issue
+            var MyList = list.Split(ListSeparator); // ListSeparator = ',' 
+            foreach (var x in MyList)
+            {
+                yield return (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromString(x);
+            }
 
             //List<T> ConvertList = new List<T>(); //FormatException
             //ConvertList.Add((T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromString(list));
             //return ConvertList;
-
-
-            // var temp = TypeDescriptor.GetConverter(list);//Returns a type converter for a component or a type
-            //TypeConverter converter =
-            //TypeDescriptor.GetConverter(typeof(T));
-            //return (T)converter.ConvertFromString(null,
-            //CultureInfo.InvariantCulture, (typeof(T) temp));
-
-            throw new NotImplementedException();
         }
-
     }
 
     public static class ArrayExtentions {
