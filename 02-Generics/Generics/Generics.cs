@@ -53,11 +53,6 @@ namespace Task.Generics {
             // TODO : Implement ConvertToList<T>
             // HINT : Use TypeConverter.ConvertFromString method to parse string value
 
-            List<T> resultConvertList = new List<T>();
-            var converter = TypeDescriptor.GetConverter(list);
-            resultConvertList.Add((T)converter.ConvertFromString(list));
-            return resultConvertList;
-
             //List<T> ConvertList = new List<T>(); //FormatException
             //ConvertList.Add((T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromString(list));
             //return ConvertList;
@@ -69,7 +64,7 @@ namespace Task.Generics {
             //return (T)converter.ConvertFromString(null,
             //CultureInfo.InvariantCulture, (typeof(T) temp));
 
-            // throw new NotImplementedException();
+            throw new NotImplementedException();
         }
 
     }
@@ -268,25 +263,14 @@ namespace Task.Generics {
 		/// </example>
 		public static Predicate<T> CombinePredicates<T>(Predicate<T>[] predicates) {
             // TODO : Implement CombinePredicates<T>
-            //return delegate (T item)
-            //{
-            //    foreach (Predicate<T> predicate in predicates)
-            //    {
-            //        if (predicate(item))
-            //        {
-            //            return true;
-            //        }
-            //    }
-            //    return false;
-            //};
-            bool result(T x)
-            {//Linq
-                return predicates.All(p => p(x));
-            }
-            return result;
+            //bool result(T x)
+            //{//Linq
+            //    return predicates.All(p => p(x));
+            //}
+            //return result;
+
+            List<Predicate<T>> list = predicates.Cast<Predicate<T>>().ToList();
+            return x => list.All(y => y(x));
         }
-
 	}
-
-
 }
