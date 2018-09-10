@@ -222,6 +222,8 @@ namespace Task.Generics {
 		/// </example>
 		public static T TimeoutSafeInvoke<T>(this Func<T> function) {
             // TODO : Implement TimeoutSafeInvoke<T>
+            
+            //fixed incorrect error handling 
             const int NumberOfRequests = 3;
             for (int i = 1; i < NumberOfRequests; i++)
             {
@@ -269,6 +271,7 @@ namespace Task.Generics {
             //}
             //return result;
 
+            //fixed too verbose 
             List<Predicate<T>> list = predicates.Cast<Predicate<T>>().ToList();
             return x => list.All(y => y(x));
         }
