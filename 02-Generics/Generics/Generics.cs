@@ -109,69 +109,29 @@ namespace Task.Generics {
         ///   }
         /// </example>
 
-        //sort using IComparer
-        public class Exchange<T1, T2, T3> : IComparer
-        {
-            private int sortedColumn;
-            private bool asceding;
-            public Exchange(int sortedColumn, bool asceding)
-            {
-                this.sortedColumn = sortedColumn;
-                this.asceding = asceding;
-            }
-
-            public int Compare<T>(T x, T y)
-            {
-                try
-                {
-                    if (asceding)
-                    {
-                        return Comparer<T>.Default.Compare(x, y);
-                    }
-                    else
-                    {
-                        return Comparer<T>.Default.Compare(y, x);
-                    }
-                }
-                catch (ArgumentException ex) { return 0; }
-
-            }
-
-            public int Compare(object x, object y)
-            {
-                Tuple<T1, T2, T3> X_variables = x as Tuple<T1, T2, T3>;
-                Tuple<T1, T2, T3> Y_variables = x as Tuple<T1, T2, T3>;
-                if (X_variables == null || Y_variables == null)
-                {
-                    return 0;
-                }
-                if (sortedColumn == 0)
-                {
-                    return Compare<T1>(X_variables.Item1, Y_variables.Item1);
-                }
-                else if (sortedColumn == 1)
-                {
-                    return Compare<T2>(X_variables.Item2, Y_variables.Item2);
-                }
-                else if (sortedColumn == 2)
-                {
-                    return Compare<T3>(X_variables.Item3, Y_variables.Item3);
-                }
-                else throw new IndexOutOfRangeException();
-            }
-        }
-        public static void SortTupleArray<T1, T2, T3>(this Tuple<T1, T2, T3>[] array, int sortedColumn, bool ascending) {
+        //sort using IComparable
+        public static void SortTupleArray<T1, T2, T3>(this Tuple<T1, T2, T3>[] array, int sortedColumn, bool ascending)
+            where T1 : IComparable<T1>
+            where T2 : IComparable<T2>
+            where T3 : IComparable<T3>
+        {    
             // TODO :SortTupleArray<T1, T2, T3>
             // HINT : Add required constraints to generic types
-            if (sortedColumn > 2 || sortedColumn < 0)//??
+            if (sortedColumn > 2 || sortedColumn < 0)
             {//ArrayExtentions_SortTupleArray_Should_Throw_IndexOutOfRangeException_If_sortedColumn_Is_Out_Of_Range
                 throw new IndexOutOfRangeException();
             }
-            var compare = new Exchange<T1, T2, T3>(sortedColumn, ascending);
-            Array.Sort(array,compare);
-		}
-
-	}
+            var valueAscendint = ascending ? 1 : 0;
+            Func<Tuple<T1, T2, T3>, Tuple<T1, T2, T3>, int>[] ListFunc =
+            {
+                (x,y)=>x.Item1.CompareTo(y.Item1),
+                (x,y)=>x.Item2.CompareTo(y.Item2),
+                (x,y)=>x.Item3.CompareTo(y.Item3),
+            };
+            var func = ListFunc[sortedColumn];
+            Array.Sort(array, (x, y) => valueAscendint * func(x, y));
+        }
+    }
 
     /// <summary>
     ///   Generic singleton class
