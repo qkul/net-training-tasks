@@ -54,11 +54,11 @@ namespace Task.Generics {
             // HINT : Use TypeConverter.ConvertFromString method to parse string value     
             //fixed issue
             var MyList = list.Split(ListSeparator); // ListSeparator = ',' 
+            var converter = TypeDescriptor.GetConverter(typeof(T));
             foreach (var x in MyList)
             {
-                yield return (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromString(x);
+                yield return (T)converter.ConvertFromString(x);
             }
-
             //List<T> ConvertList = new List<T>(); //FormatException
             //ConvertList.Add((T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromString(list));
             //return ConvertList;
