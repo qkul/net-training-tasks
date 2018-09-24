@@ -1,0 +1,10 @@
+D:\Project\EPAM task\03-Collections\Collections.Test\bin\Debug\Collections.Test.dll
+D:\Project\EPAM task\03-Collections\Collections.Test\bin\Debug\Collections.Test.pdb
+D:\Project\EPAM task\03-Collections\Collections.Test\bin\Debug\Collections.dll
+D:\Project\EPAM task\03-Collections\Collections.Test\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+D:\Project\EPAM task\03-Collections\Collections.Test\bin\Debug\Collections.pdb
+D:\Project\EPAM task\03-Collections\Collections.Test\obj\Debug\Collections.Test.csprojAssemblyReference.cache
+D:\Project\EPAM task\03-Collections\Collections.Test\obj\Debug\Collections.Test.csproj.CoreCompileInputs.cache
+D:\Project\EPAM task\03-Collections\Collections.Test\obj\Debug\Collections.Test.csproj.CopyComplete
+D:\Project\EPAM task\03-Collections\Collections.Test\obj\Debug\Collections.Test.dll
+D:\Project\EPAM task\03-Collections\Collections.Test\obj\Debug\Collections.Test.pdb
