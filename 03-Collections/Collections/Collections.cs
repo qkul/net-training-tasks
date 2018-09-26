@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Collections.Tasks {
+namespace Collections.Tasks
+{
 
     /// <summary>
     ///  Tree node item 
     /// </summary>
     /// <typeparam name="T">the type of tree node data</typeparam>
-    public interface ITreeNode<T> {
+    public interface ITreeNode<T>
+    {
         T Data { get; set; }                             // Custom data
         IEnumerable<ITreeNode<T>> Children { get; set; } // List of childrens
     }
 
-    public class Task {
+    public class Task
+    {
 
         /// <summary> Generate the Fibonacci sequence f(x) = f(x-1)+f(x-2) </summary>
         /// <param name="count">the size of a required sequence</param>
@@ -32,17 +35,18 @@ namespace Collections.Tasks {
         {
             // TODO : Implement Fibonacci sequence generator
             // return count > 1 ? GetFibonacciSequence(count - 1) + GetFibonacciSequence(count - 2) : count;
-            int resultItem = 0, Item1 = 0, Item2 = 1;
+            //fix #7
+            int resultItem = 0, item1 = 0, item2 = 1;
             if (count < 0)
                 throw new ArgumentException();
             if (count > 0)
                 yield return 1;
-            for (int i = 0; i < count -1 ; i++)
+            for (var i = 0; i < count - 1; i++)
             {
-                resultItem = Item1 + Item2;
+                resultItem = item1 + item2;
                 yield return resultItem;
-                Item1 = Item2;
-                Item2 = resultItem;
+                item1 = item2;
+                item2 = resultItem;
             }
         }
 
@@ -58,13 +62,14 @@ namespace Collections.Tasks {
         ///  "TextReader is the abstract base class of StreamReader and StringReader, which ..." => 
         ///   {"TextReader","is","the","abstract","base","class","of","StreamReader","and","StringReader","which",...}
         /// </example>
-        public static IEnumerable<string> Tokenize(TextReader reader) {
+        public static IEnumerable<string> Tokenize(TextReader reader)
+        {
             char[] delimeters = new[] { ',', ' ', '.', '\t', '\n' };
             // TODO : Implement the tokenizer
             if (reader == null)
                 throw new ArgumentNullException();
             string str = null;
-            while ((str = reader.ReadLine())!= null)
+            while ((str = reader.ReadLine()) != null)
             {//The ReadLine method reads a line from the standard input stream
                 var words = str.Split(delimeters, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var word in words)
@@ -103,12 +108,13 @@ namespace Collections.Tasks {
             List<ITreeNode<T>> listChilderns = new List<ITreeNode<T>>(root.Children);
             // foreach (var item in listChilderns)           
             //    stack.Push(item);
-            for (int i = listChilderns.Count-1; i >= 0; i--)
+            for (var i = listChilderns.Count - 1; i >= 0; i--)
             {
                 stack.Push(listChilderns[i]);
             }
         }
-        public static IEnumerable<T> DepthTraversalTree<T>(ITreeNode<T> root) {
+        public static IEnumerable<T> DepthTraversalTree<T>(ITreeNode<T> root)
+        {
             // TODO : Implement the tree depth traversal algorithm
             if (root == null)
                 throw new ArgumentNullException("root");
@@ -152,7 +158,8 @@ namespace Collections.Tasks {
                 queue.Enqueue(item);//adds an object to the end of the list
 
         }
-        public static IEnumerable<T> WidthTraversalTree<T>(ITreeNode<T> root) {
+        public static IEnumerable<T> WidthTraversalTree<T>(ITreeNode<T> root)
+        {
             // TODO : Implement the tree width traversal algorithm
             if (root == null)
                 throw new ArgumentNullException("root");
@@ -163,7 +170,7 @@ namespace Collections.Tasks {
                 yield return queues.Peek().Data;
                 AddChildrenQueues(queues.Dequeue(), queues);
             }
-        } 
+        }
 
         /// <summary>
         ///   Generates all permutations of specified length from source array
@@ -182,12 +189,13 @@ namespace Collections.Tasks {
         ///   source = { 1,2,3,4 }, count=4 => {{1,2,3,4}}
         ///   source = { 1,2,3,4 }, count=5 => ArgumentOutOfRangeException
         /// </example
-        public static IEnumerable<T[]> GenerateAllPermutations<T>(T[] source, int count) {
+        public static IEnumerable<T[]> GenerateAllPermutations<T>(T[] source, int count)
+        {
             // TODO : Implement GenerateAllPermutations method
             if (count > source.Length)
                 throw new ArgumentOutOfRangeException();
 
-            for (int i = 0; i < Math.Pow(2, source.Length); i++)
+            for (var i = 0; i < Math.Pow(2, source.Length); i++)
             {//2^source -> количество возможных вариантов 
                 List<T> list = new List<T>();
                 int counter = 0;
@@ -206,8 +214,9 @@ namespace Collections.Tasks {
             }
         }
     }
-    public static class DictionaryExtentions {
-        
+    public static class DictionaryExtentions
+    {
+
         /// <summary>
         ///    Gets a value from the dictionary cache or build new value
         /// </summary>
@@ -233,12 +242,10 @@ namespace Collections.Tasks {
             {
                 return value;
             }
-            else
-            {
-                var temp = builder();
-                dictionary.Add(key, temp);
-                return temp;
-            }
+            //fix #9
+            var temp = builder();
+            dictionary.Add(key, temp);
+            return temp;
         }
 
     }
