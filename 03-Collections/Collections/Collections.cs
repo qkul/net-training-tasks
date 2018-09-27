@@ -105,12 +105,10 @@ namespace Collections.Tasks
         {
             if (root.Children == null)
                 return;
-            List<ITreeNode<T>> listChilderns = new List<ITreeNode<T>>(root.Children);
-            // foreach (var item in listChilderns)           
-            //    stack.Push(item);
-            for (var i = listChilderns.Count - 1; i >= 0; i--)
+            var rootChildrens1 = root.Children.ToArray();
+            for (var i = root.Children.Count() - 1; i >= 0; i--)
             {
-                stack.Push(listChilderns[i]);
+                stack.Push(rootChildrens1[i]);
             }
         }
         public static IEnumerable<T> DepthTraversalTree<T>(ITreeNode<T> root)
@@ -152,11 +150,10 @@ namespace Collections.Tasks
         {
             if (root.Children == null)
                 return;
-
-            List<ITreeNode<T>> listChilderns = new List<ITreeNode<T>>(root.Children);
-            foreach (var item in listChilderns)
-                queue.Enqueue(item);//adds an object to the end of the list
-
+            var rootChildrens = root.Children.ToArray();
+            foreach (var item in root.Children)
+                queue.Enqueue(item);
+            //adds an object to the end of the list
         }
         public static IEnumerable<T> WidthTraversalTree<T>(ITreeNode<T> root)
         {
