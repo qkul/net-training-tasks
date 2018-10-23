@@ -133,7 +133,7 @@ namespace EnumerableTask {
         public IEnumerable<T> PropagateItemsByPositionIndex<T>(IEnumerable<T> data) {
             // TODO : Implement PropagateItemsByPositionIndex
             return data.
-                SelectMany((p, index) => Enumerable.Repeat(p,++index));
+                SelectMany((p, index) => Enumerable.Repeat(p,index+1)); //#11
         }
 
         /// <summary>Finds all used char in string sequence</summary>
@@ -185,10 +185,9 @@ namespace EnumerableTask {
         ///   { 10, 10, 10, 10 } => { 10, 10, 10 }
         /// </example>
         public IEnumerable<int> Get3TopItems(IEnumerable<int> data) {
-            // TODO : Implement Get3TopItems
-            const int COUNT = 3;
+            // TODO : Implement Get3TopItems           
             return data.
-                OrderByDescending(p => p).Take(COUNT);
+                OrderByDescending(p => p).Take(3);
         }
 
         /// <summary> Calculates the count of numbers that are greater then 10</summary>
@@ -204,8 +203,7 @@ namespace EnumerableTask {
         /// </example>
         public int GetCountOfGreaterThen10(IEnumerable<int> data) {
             // TODO : Implement GetCountOfGreaterThen10
-            const int NUMBER = 10;
-            return data.Count(p => p > NUMBER);
+            return data.Count(p => p > 10);
         }
 
 
@@ -221,8 +219,9 @@ namespace EnumerableTask {
         /// </example>
         public string GetFirstContainsFirst(IEnumerable<string> data) {
             // TODO : Implement GetFirstContainsFirst
-            //Contains FirstOrDefault ToUpper
-            return data.Where(x => x != null).FirstOrDefault(x => x.ToUpper().Contains("FIRST"));
+            //Contains FirstOrDefault StringComparison
+            return data.Where(x => x != null).
+                FirstOrDefault(x => x.IndexOf("First", StringComparison.CurrentCultureIgnoreCase)>0); //#12
         }
 
         /// <summary> Counts the number of unique strings with length=3 </summary>
@@ -238,9 +237,8 @@ namespace EnumerableTask {
         /// </example>
         public int GetCountOfStringsWithLengthEqualsTo3(IEnumerable<string> data) {
             // TODO : Implement GetCountOfStringsWithLengthEqualsTo3
-            const int WORD_LENGTH = 3;
             return data.
-                Where(x => x != null && x.Length == WORD_LENGTH).Distinct().Count();
+                Where(x => x != null && x.Length == 3).Distinct().Count();
 
         }
 
@@ -258,7 +256,7 @@ namespace EnumerableTask {
         public IEnumerable<Tuple<string,int>> GetCountOfStrings(IEnumerable<string> data) {
             // TODO : Implement GetCountOfStrings
            // return data.Select(x => Tuple.Create(x, data.Where(y => y == x).Count())).Distinct();
-            return data.
+            return data.    
                 GroupBy(w => w).
                 Select(x => new Tuple<string, int>(x.Key, x.Count()));
         }
@@ -277,9 +275,11 @@ namespace EnumerableTask {
         /// </example>
         public int GetCountOfStringsWithMaxLength(IEnumerable<string> data) {
             // TODO : Implement GetCountOfStringsWithMaxLength
-            return data.
-                 Where(x => (x ?? "").Length == data.Max(t => (t ?? "").Length)).
-                 Count();
+            //return data.
+            //     Where(x => (x ?? "").Length == data.Max(t => (t ?? "").Length)).
+            //     Count();
+            return data.Count() > 0 ? data.GroupBy(x => x == null ? 0 : x.Length).
+                OrderByDescending(s => s.Key).First().Count():0; //#13
         }
 
 
@@ -299,7 +299,7 @@ namespace EnumerableTask {
         /// </example>
         public int GetDigitCharsCount(string data) {
             // TODO : Implement GetDigitCharsCount
-            return data.Count(x => Char.IsDigit(x));
+            return data.Count(Char.IsDigit); // #14
         }
 
 
@@ -348,11 +348,10 @@ namespace EnumerableTask {
         /// </example>
         public int[] GetQuarterSales(IEnumerable<Tuple<DateTime, int>> sales) {
             // TODO : Implement GetQuarterSales
-            const int countMonthInQuarter = 3, coutQuarters = 4;
             return sales
-                .Aggregate(new int[coutQuarters], (result, item) =>
+                .Aggregate(new int[4], (result, item) =>
                 {
-                    result[(item.Item1.Month - 1) / countMonthInQuarter] += item.Item2;
+                    result[(item.Item1.Month - 1) / 3] += item.Item2;
                         return result;
                 });
         }
@@ -441,7 +440,7 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<char> GetCommonChars(IEnumerable<string> data) {
             // TODO : Implement GetCommonChars
-            return data.DefaultIfEmpty("").
+            return data.DefaultIfEmpty(string.Empty).
                 Aggregate<IEnumerable<char>>((x, y) => x.Intersect(y));
         }
 
@@ -527,7 +526,7 @@ namespace EnumerableTask {
         /// </example>
         public bool IsAllStringsAreUppercase(IEnumerable<string> data) {
             // TODO : Implement IsAllStringsAreUppercase
-            return data.DefaultIfEmpty("")
+            return data.DefaultIfEmpty(string.Empty)
                 .All(x => x.ToUpperInvariant() == x && x.Length > 0);
         }
 
