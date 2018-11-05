@@ -18,15 +18,29 @@ namespace LinqToXml
         public static string CreateHierarchy(string xmlRepresentation)
         {
             //throw new NotImplementedException();
-            var elem = XElement.Parse(xmlRepresentation);      
-            var result = new XElement("Root", elem.Elements("Data").
-                GroupBy(x => x.Element("Category").Value).
-                Select(x =>
-                {
-                    return new XElement("Group", new XAttribute("ID", x.Key), x);
-                }));     
-            result.Descendants("Category").Remove();
-            return result.ToString();
+            //var elem = XElement.Parse(xmlRepresentation);      
+            //var result = new XElement("Root", elem.Elements("Data").
+            //    GroupBy(x => x.Element("Category").Value).
+            //    Select(x =>
+            //    {
+            //        return new XElement("Group", new XAttribute("ID", x.Key), x);
+            //    }));     
+            //result.Descendants("Category").Remove();
+            //return result.ToString();
+
+            //fix #17 and fix #15
+            return new XElement(
+                "Root",
+                XElement.Parse(xmlRepresentation).Elements("Data")
+                    .GroupBy(x => (string)x.Element("Category"))
+                    .Select(x => new XElement(
+                        "Group",
+                         new XAttribute("ID", x.Key),
+                         x.Select(d => new XElement("Data",
+                               d.Element("Quantity"),
+                               d.Element("Price")))
+                     ))
+            ).ToString();
         }
 
         /// <summary>
@@ -39,11 +53,12 @@ namespace LinqToXml
         /// </example>
         public static string GetPurchaseOrders(string xmlRepresentation)
         {
+            //fix #16 (Value)
             XNamespace aw = "http://www.adventure-works.com";
             return string.Join(",", XElement.Parse(xmlRepresentation)
                 .Elements(aw + "PurchaseOrder")
                 .Where(x => x.Elements(aw + "Address")
-                             .Where(y => y.Attribute(aw + "Type").Value == "Shipping")
+                             .Where(y => (string)y.Attribute(aw + "Type") == "Shipping")
                              .ElementAtOrDefault(0)
                              .Element(aw + "State")
                              .Value == "NY").Select(x => (string)x.Attribute(aw + "PurchaseOrderNumber")));
@@ -56,25 +71,28 @@ namespace LinqToXml
         /// <returns>Xml customers representation (refer to XmlFromCsvResultFile.xml in Resources)</returns>
         public static string ReadCustomersFromCsv(string customers)
         {
-            var customer = new XElement("Root");
-            foreach (var item in Regex.Split(customers, "\r\n").Select(c => c.Split(',')))
-            {
-                customer.Add(new XElement("Customer",
-                    new XAttribute("CustomerID", item[0]),
-                    new XElement("CompanyName", item[1]),
-                    new XElement("ContactName", item[2]),
-                    new XElement("ContactTitle", item[3]),
-                    new XElement("Phone", item[4]),
-                    new XElement("FullAddress",
-                        new XElement("Address", item[5]),
-                        new XElement("City", item[6]),
-                        new XElement("Region", item[7]),
-                        new XElement("PostalCode", item[8]),
-                        new XElement("Country", item[9])
-                        )
-                    ));
-            }
-            return customer.ToString();
+            // var customer = new XElement("Root");
+            //fix#15 use linq
+            return new XElement(
+                "Root",
+                Regex.Split(customers, "\r\n")
+                .Select(c => c.Split(','))
+                .Select(item =>
+                  new XElement("Customer",
+                      new XAttribute("CustomerID", item[0]),
+                      new XElement("CompanyName", item[1]),
+                      new XElement("ContactName", item[2]),
+                      new XElement("ContactTitle", item[3]),
+                      new XElement("Phone", item[4]),
+                      new XElement("FullAddress",
+                          new XElement("Address", item[5]),
+                          new XElement("City", item[6]),
+                          new XElement("Region", item[7]),
+                          new XElement("PostalCode", item[8]),
+                          new XElement("Country", item[9])
+                      )
+                  ))                 
+            ).ToString(); 
         }
         /// <summary>
         /// Gets recursive concatenation of elements
@@ -113,7 +131,7 @@ namespace LinqToXml
             return elem.Descendants("channel").Where(x => x.Elements("subscriber").Count() >= 2 &&
                   x.DescendantNodes().OfType<XComment>().
                   Any(y => y.Value == "DELETE")).
-            Select(x => Convert.ToInt32(x.Attribute("id").Value));
+            Select(x => (int)x.Attribute("id"));
         }
 
         /// <summary>
@@ -125,8 +143,8 @@ namespace LinqToXml
         {
             var elem = XElement.Parse(xmlRepresentation);
             var result = new XElement("Root", elem.Descendants("Customers").
-                OrderBy(x => x.Descendants("Country").First().Value + 
-                             x.Descendants("City").First().Value).
+                OrderBy(x => (string)x.Descendants("Country").First() + 
+                             (string)x.Descendants("City").First()).
                ToArray());
             System.Diagnostics.Trace.WriteLine(result.ToString());
             return result.ToString();
