@@ -91,8 +91,8 @@ namespace LinqToXml
                           new XElement("PostalCode", item[8]),
                           new XElement("Country", item[9])
                       )
-                  ))                 
-            ).ToString(); 
+                  ))
+            ).ToString();
         }
         /// <summary>
         /// Gets recursive concatenation of elements
@@ -101,7 +101,7 @@ namespace LinqToXml
         /// <returns>Concatenation of all this element values.</returns>
         public static string GetConcatenationString(string xmlRepresentation)
         {
-            return XDocument.Parse(xmlRepresentation).Root.Value;
+            return (string)XDocument.Parse(xmlRepresentation).Root;
         }
 
         /// <summary>
@@ -111,13 +111,19 @@ namespace LinqToXml
         /// <returns>Xml representation with contacts (refer to ReplaceCustomersWithContactsResult.xml in Resources)</returns>
         public static string ReplaceAllCustomersWithContacts(string xmlRepresentation)
         {
-            var elem = XElement.Parse(xmlRepresentation);
-            var result = new XElement("Document", elem.Elements("customer").Select((x) => 
+            //var elem = XElement.Parse(xmlRepresentation);
+            //var result = new XElement("Document", elem.Elements("customer").Select((x) => 
+            //{
+            //    x.Name = "contact";
+            //    return x;
+            //}));
+            //return result.ToString();
+
+            return new XElement("Document", XElement.Parse(xmlRepresentation).Elements("customer").Select((x) =>
             {
                 x.Name = "contact";
                 return x;
-            }));
-            return result.ToString();
+            })).ToString();
         }
 
         /// <summary>
@@ -127,8 +133,8 @@ namespace LinqToXml
         /// <returns>Sequence of channels ids</returns>
         public static IEnumerable<int> FindChannelsIds(string xmlRepresentation)
         {
-            var elem = XElement.Parse(xmlRepresentation);
-            return elem.Descendants("channel").Where(x => x.Elements("subscriber").Count() >= 2 &&
+            // var elem = XElement.Parse(xmlRepresentation);
+            return XElement.Parse(xmlRepresentation).Descendants("channel").Where(x => x.Elements("subscriber").Count() >= 2 &&
                   x.DescendantNodes().OfType<XComment>().
                   Any(y => y.Value == "DELETE")).
             Select(x => (int)x.Attribute("id"));
@@ -141,13 +147,24 @@ namespace LinqToXml
         /// <returns>Sorted customers representation (refer to GeneralCustomersResultFile.xml in Resources)</returns>
         public static string SortCustomers(string xmlRepresentation)
         {
-            var elem = XElement.Parse(xmlRepresentation);
-            var result = new XElement("Root", elem.Descendants("Customers").
-                OrderBy(x => (string)x.Descendants("Country").First() + 
-                             (string)x.Descendants("City").First()).
-               ToArray());
-            System.Diagnostics.Trace.WriteLine(result.ToString());
-            return result.ToString();
+            //   var elem = XElement.Parse(xmlRepresentation);
+            //var result = new XElement(
+            //    "Root",
+            //    XElement.Parse(xmlRepresentation).Descendants("Customers").
+            //    OrderBy(x => (string)x.Descendants("Country").First() + 
+            //                 (string)x.Descendants("City").First()).
+            //   ToArray());
+            //System.Diagnostics.Trace.WriteLine(result.ToString());
+            //return result.ToString();
+
+            //new solution
+            return new XElement(
+                "Root",
+                XElement.Parse(xmlRepresentation).Elements("Customers")
+                .OrderBy(x => (string)x.Element("FullAddress").Element("Country"))
+                .ThenBy(x => (string)x.Element("FullAddress").Element("City"))).
+               ToString();
+
         }
 
         /// <summary>
@@ -160,16 +177,7 @@ namespace LinqToXml
         /// </example>
         public static string GetFlattenString(XElement xmlRepresentation)
         {
-            var strXml = xmlRepresentation.ToString();
-            var res = string.Empty;
-            var unnecessaryElements = new[] { ' ', '\t', '\r', '\n', '\\' };
-
-            for (int i = 0; i < strXml.Length; i++)
-            {
-                if (!(unnecessaryElements.Contains(strXml[i])))
-                    res += strXml[i];            
-            }
-            return res;
+            return xmlRepresentation.ToString(SaveOptions.DisableFormatting);
         }
 
         /// <summary>
@@ -179,21 +187,27 @@ namespace LinqToXml
         /// <returns>Total purchase value</returns>
         public static int GetOrdersValue(string xmlRepresentation)
         {
-            var document = XDocument.Parse(xmlRepresentation);
-            int sumValue = 0;           
-            var root = document.Element("Root");
-            foreach (var order in root.Element("Orders").Elements("Order"))
-            {
-                foreach (var product in root.Element("products").Descendants())
-                {
-                    if (product.Attribute("Id").Value == order.Element("product").Value)
-                    {
-                        sumValue += Convert.ToInt32(product.Attribute("Value").Value);
-                        break;
-                    }
-                }
-            }
-            return sumValue;
-        }
+            //var document = XDocument.Parse(xmlRepresentation);
+            //int sumValue = 0;
+            //var root = document.Element("Root");
+            //foreach (var order in root.Element("Orders").Elements("Order"))
+            //{
+            //    foreach (var product in root.Element("products").Descendants())
+            //    {
+            //        if (product.Attribute("Id").Value == order.Element("product").Value)
+            //        {
+            //            sumValue += Convert.ToInt32(product.Attribute("Value").Value);
+            //            break;
+            //        }
+            //    }
+            //}
+            //return sumValue;
+
+            return XElement.Parse(xmlRepresentation).Element("Orders").Elements("Order")
+                   .Join(XElement.Parse(xmlRepresentation).Element("products").Elements(),//Order склеиваем с Price
+                    order => (string)order.Element("product"),
+                    price => (string)price.Attribute("Id"), (order, price) => new { Price = price.Attribute("Value") })
+                    .Sum(x => (int)x.Price);
+        }      
     }
 }
