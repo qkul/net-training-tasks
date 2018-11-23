@@ -52,14 +52,17 @@ namespace IOStreams
             //}
             var sc = XNamespace.Get("http://schemas.openxmlformats.org/spreadsheetml/2006/main");
             var namesPlanet = xmlsSharedString.Descendants(sc + "t").
-                Select(pl => (string)pl);
+                Select(pl => (string)pl).ToArray();
+            int indexPlanets = 0;
             return xmlsWorksheets.
                     Descendants(sc + "row")
                     .Skip(1)
                     .Select(x => new PlanetInfo
                     {
-                        Name = namesPlanet.ElementAt((int)x.Element(sc + "c").Element(sc + "v")),
-                        MeanRadius = (double)x.Elements(sc + "c").Where(y => ((string)y.Attribute("r")).StartsWith("B")).Elements(sc + "v").First()
+                        // Name = namesPlanet.ElementAt((int)x.Element(sc + "c").Element(sc + "v")),
+                        Name =  namesPlanet[indexPlanets++],
+                        MeanRadius = (double)x.Elements(sc + "c").Where(y => ((string)y.Attribute("r")).
+                        StartsWith("B")).Elements(sc + "v").First()
                     });
 
         }
