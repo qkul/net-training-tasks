@@ -21,7 +21,7 @@ namespace EnumerableTask {
         public IEnumerable<string> GetUppercaseStrings(IEnumerable<string> data) {
             // TODO : Implement GetUppercaseStrings
             return data.
-                Select(p => p == null ? p : p.ToUpperInvariant());
+                Select(p => p?.ToUpperInvariant() ?? p);
         }
 
         /// <summary> Transforms an each string from sequence to its length</summary>
@@ -36,8 +36,9 @@ namespace EnumerableTask {
         /// </example>
         public IEnumerable<int> GetStringsLength(IEnumerable<string> data) {
             // TODO : Implement GetStringsLength
-            return data.
-                 Select(p => p == null ? 0 : p.Length);
+            //  return data.
+            //      Select(p => p == null ? 0 : p.Length);
+            return data.Select(p => p?.Length ?? 0);
         }
 
         /// <summary>Transforms int sequence to its square sequence, f(x) = x * x </summary>
@@ -221,7 +222,10 @@ namespace EnumerableTask {
             // TODO : Implement GetFirstContainsFirst
             //Contains FirstOrDefault StringComparison
             return data.Where(x => x != null).
-                FirstOrDefault(x => x.IndexOf("First", StringComparison.CurrentCultureIgnoreCase)>0); //#12
+                FirstOrDefault(x => x.IndexOf("First", StringComparison.CurrentCultureIgnoreCase) > 0); //#12
+            //solution 2 
+            //   return data.FirstOrDefault(x => x == null ? false : x.IndexOf("First", StringComparison.CurrentCultureIgnoreCase)>0);
+            
         }
 
         /// <summary> Counts the number of unique strings with length=3 </summary>
@@ -278,8 +282,8 @@ namespace EnumerableTask {
             //return data.
             //     Where(x => (x ?? "").Length == data.Max(t => (t ?? "").Length)).
             //     Count();
-            return data.Count() > 0 ? data.GroupBy(x => x == null ? 0 : x.Length).
-                OrderByDescending(s => s.Key).First().Count():0; //#13
+            return data.Count() > 0 ? data.GroupBy(x => x?.Length ?? 0).
+                OrderByDescending(s => s.Key).First().Count() : 0; //#13
         }
 
 
