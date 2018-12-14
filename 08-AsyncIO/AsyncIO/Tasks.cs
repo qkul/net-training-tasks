@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Security.Cryptography;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Net.Http;
-using System.IO;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace AsyncIO
 {
@@ -21,7 +19,7 @@ namespace AsyncIO
         public static IEnumerable<string> GetUrlContent(this IEnumerable<Uri> uris)
         {
             // TODO : Implement GetUrlContent 
-            return uris.Select(uri => new WebClient().DownloadString(uri));         
+            return uris.Select(uri => new WebClient().DownloadString(uri));
         }
 
         /// <summary>
@@ -35,12 +33,30 @@ namespace AsyncIO
         /// <returns>The sequence of downloaded url content</returns>
         public static IEnumerable<string> GetUrlContentAsync(this IEnumerable<Uri> uris, int maxConcurrentStreams)
         {
-          //  TODO: Implement GetUrlContentAsync
-            var enumer = uris.GetEnumerator();
-            var tasks = new List<Task<string>>();
-            while (tasks.Count() < maxConcurrentStreams && enumer.MoveNext())
-                tasks.Add((new WebClient().DownloadStringTaskAsync(enumer.Current)));
+            //  TODO: Implement GetUrlContentAsync
+            //var enumer = uris.GetEnumerator();
+            //var tasks = new List<Task<string>>();  
+            //while (tasks.Count() < maxConcurrentStreams && enumer.MoveNext())
+            //    tasks.Add((new WebClient().DownloadStringTaskAsync(enumer.Current)));
 
+            var tasks = new Task<string>[maxConcurrentStreams];
+            int id = 0;
+            foreach (var uri in uris)
+            {
+                if (id >= maxConcurrentStreams)
+                {
+                    var idCompletedTask = Task.WaitAny(tasks);
+                    var completedTask = tasks[idCompletedTask];
+                    tasks[idCompletedTask] = GetOneUrl(uri);
+                    yield return completedTask.Result;
+                }
+                else
+                {
+                    tasks[id] = GetOneUrl(uri);
+                    id++;
+                }
+            }
+      
             var listTasks = tasks.ToList();
             while (!listTasks.Any())
             {
@@ -50,7 +66,10 @@ namespace AsyncIO
                 yield return resultTask.Result;
             }
         }
-
+        private static Task<string> GetOneUrl(Uri uri)
+        {
+            return new HttpClient().GetStringAsync(uri);
+        }
 
         /// <summary>
         /// Calculates MD5 hash of required resource.
